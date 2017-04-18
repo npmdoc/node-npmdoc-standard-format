@@ -1,0 +1,256 @@
+<html><head></head><body><div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a href="https://github.com/maxogden/standard-format">standard-format (v2.2.4)</a>
+</h1>
+<h4>attempts to reformat javascript to comply with feross/standard style</h4>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.standard-format">module standard-format</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.standard-format.load">
+            function <span class="apidocSignatureSpan">standard-format.</span>load
+            <span class="apidocSignatureSpan">(opts, cb)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.standard-format.transform">
+            function <span class="apidocSignatureSpan">standard-format.</span>transform
+            <span class="apidocSignatureSpan">(file)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.standard-format.load">module standard-format.load</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.standard-format.load.load">
+            function <span class="apidocSignatureSpan">standard-format.</span>load
+            <span class="apidocSignatureSpan">(opts, cb)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.standard-format.transform">module standard-format.transform</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.standard-format.transform.transform">
+            function <span class="apidocSignatureSpan">standard-format.</span>transform
+            <span class="apidocSignatureSpan">(file)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.standard-format" id="apidoc.module.standard-format">module standard-format</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.standard-format.load" id="apidoc.element.standard-format.load">
+        function <span class="apidocSignatureSpan">standard-format.</span>load
+        <span class="apidocSignatureSpan">(opts, cb)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">load = function (opts, cb) {
+  if (typeof opts === 'function') {
+    cb = opts
+    opts = {}
+  }
+  if (!opts) opts = {}
+
+  var ignore = [].concat(DEFAULT_IGNORE) // globs to ignore
+  if (opts.ignore) ignore = ignore.concat(opts.ignore)
+
+  var deglobOpts = {
+    ignore: ignore,
+    cwd: opts.cwd || process.cwd(),
+    useGitIgnore: true,
+    usePackageJson: true,
+    configKey: 'standard'
+  }
+
+  deglob(['**/*.js', '**/*.jsx'], deglobOpts, function (err, files) {
+    if (err) return cb(err)
+
+    files = files.map(function (f) {
+      return { name: f, data: fs.readFileSync(f).toString() } // assume utf8
+    })
+    cb(null, files)
+  })
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.standard-format.transform" id="apidoc.element.standard-format.transform">
+        function <span class="apidocSignatureSpan">standard-format.</span>transform
+        <span class="apidocSignatureSpan">(file)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">transform = function (file) {
+  file = file
+    .replace(MULTI_NEWLINE_N, '\n\n')
+    .replace(MULTI_NEWLINE_RN, '\r\n\r\n')
+    .replace(EOL_SEMICOLON, '')
+    .replace(EOL_SEMICOLON_WITH_COMMENT, '')
+    .replace(SOF_NEWLINES, '')
+
+  var formatted = formatter.format(file, ESFORMATTER_CONFIG)
+    .replace(EOL_SEMICOLON, '')
+    // run replace again; esformatter-semicolon-first will re-add semicolon at EOL
+
+  return formatted
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.standard-format.load" id="apidoc.module.standard-format.load">module standard-format.load</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.standard-format.load.load" id="apidoc.element.standard-format.load.load">
+        function <span class="apidocSignatureSpan">standard-format.</span>load
+        <span class="apidocSignatureSpan">(opts, cb)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">load = function (opts, cb) {
+  if (typeof opts === 'function') {
+    cb = opts
+    opts = {}
+  }
+  if (!opts) opts = {}
+
+  var ignore = [].concat(DEFAULT_IGNORE) // globs to ignore
+  if (opts.ignore) ignore = ignore.concat(opts.ignore)
+
+  var deglobOpts = {
+    ignore: ignore,
+    cwd: opts.cwd || process.cwd(),
+    useGitIgnore: true,
+    usePackageJson: true,
+    configKey: 'standard'
+  }
+
+  deglob(['**/*.js', '**/*.jsx'], deglobOpts, function (err, files) {
+    if (err) return cb(err)
+
+    files = files.map(function (f) {
+      return { name: f, data: fs.readFileSync(f).toString() } // assume utf8
+    })
+    cb(null, files)
+  })
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.standard-format.transform" id="apidoc.module.standard-format.transform">module standard-format.transform</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.standard-format.transform.transform" id="apidoc.element.standard-format.transform.transform">
+        function <span class="apidocSignatureSpan">standard-format.</span>transform
+        <span class="apidocSignatureSpan">(file)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">transform = function (file) {
+  file = file
+    .replace(MULTI_NEWLINE_N, '\n\n')
+    .replace(MULTI_NEWLINE_RN, '\r\n\r\n')
+    .replace(EOL_SEMICOLON, '')
+    .replace(EOL_SEMICOLON_WITH_COMMENT, '')
+    .replace(SOF_NEWLINES, '')
+
+  var formatted = formatter.format(file, ESFORMATTER_CONFIG)
+    .replace(EOL_SEMICOLON, '')
+    // run replace again; esformatter-semicolon-first will re-add semicolon at EOL
+
+  return formatted
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
+</body></html>
