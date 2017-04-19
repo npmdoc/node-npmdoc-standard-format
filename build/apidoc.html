@@ -81,32 +81,6 @@
 
     </ol></li>
 
-    <li class="apidocModuleLi"><a href="#apidoc.module.standard-format.load">module standard-format.load</a><ol>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.standard-format.load.load">
-            function <span class="apidocSignatureSpan">standard-format.</span>load
-            <span class="apidocSignatureSpan">(opts, cb)</span>
-            </a>
-
-        </li>
-
-    </ol></li>
-
-    <li class="apidocModuleLi"><a href="#apidoc.module.standard-format.transform">module standard-format.transform</a><ol>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.standard-format.transform.transform">
-            function <span class="apidocSignatureSpan">standard-format.</span>transform
-            <span class="apidocSignatureSpan">(file)</span>
-            </a>
-
-        </li>
-
-    </ol></li>
-
 </ol></div>
 
 <div class="apidocSectionDiv">
@@ -147,7 +121,22 @@
     cb(null, files)
   })
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+function getFiles (done) {
+  var args = argv._
+  if (argv.stdin) {
+    return stdin(function (file) {
+      return done(null, [{ name: &#x27;stdin&#x27;, data: file }])
+    })
+  } else if (args.length === 0) {
+    return fmt.<span class="apidocCodeKeywordSpan">load</span>(done)
+  } else {
+    return done(null, args.map(function (file) {
+      return { name: file, data: fs.readFileSync(file).toString() }
+    }))
+  }
+}
+...</pre></li>
     </ul>
 
 
@@ -173,82 +162,23 @@
 
   return formatted
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
+    <li>example usage<pre class="apidocCodePre">...
+}
+}
 
+getFiles(function (err, files) {
+if (err) return error(err)
+files.forEach(function (file) {
+  try {
+    file.data = fmt.<span class="apidocCodeKeywordSpan">transform</span>(file.data)
+    processFile(file)
+  } catch (e) { error(file.name + &#x27;: &#x27; + e) }
+})
+})
 
-</div>
-
-<div class="apidocSectionDiv">
-<h1><a href="#apidoc.module.standard-format.load" id="apidoc.module.standard-format.load">module standard-format.load</a></h1>
-
-
-    <h2>
-        <a href="#apidoc.element.standard-format.load.load" id="apidoc.element.standard-format.load.load">
-        function <span class="apidocSignatureSpan">standard-format.</span>load
-        <span class="apidocSignatureSpan">(opts, cb)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">load = function (opts, cb) {
-  if (typeof opts === &#x27;function&#x27;) {
-    cb = opts
-    opts = {}
-  }
-  if (!opts) opts = {}
-
-  var ignore = [].concat(DEFAULT_IGNORE) // globs to ignore
-  if (opts.ignore) ignore = ignore.concat(opts.ignore)
-
-  var deglobOpts = {
-    ignore: ignore,
-    cwd: opts.cwd || process.cwd(),
-    useGitIgnore: true,
-    usePackageJson: true,
-    configKey: &#x27;standard&#x27;
-  }
-
-  deglob([&#x27;**/*.js&#x27;, &#x27;**/*.jsx&#x27;], deglobOpts, function (err, files) {
-    if (err) return cb(err)
-
-    files = files.map(function (f) {
-      return { name: f, data: fs.readFileSync(f).toString() } // assume utf8
-    })
-    cb(null, files)
-  })
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
-
-
-</div>
-
-<div class="apidocSectionDiv">
-<h1><a href="#apidoc.module.standard-format.transform" id="apidoc.module.standard-format.transform">module standard-format.transform</a></h1>
-
-
-    <h2>
-        <a href="#apidoc.element.standard-format.transform.transform" id="apidoc.element.standard-format.transform.transform">
-        function <span class="apidocSignatureSpan">standard-format.</span>transform
-        <span class="apidocSignatureSpan">(file)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">transform = function (file) {
-  file = file
-    .replace(MULTI_NEWLINE_N, &#x27;\n\n&#x27;)
-    .replace(MULTI_NEWLINE_RN, &#x27;\r\n\r\n&#x27;)
-    .replace(EOL_SEMICOLON, &#x27;&#x27;)
-    .replace(EOL_SEMICOLON_WITH_COMMENT, &#x27;&#x27;)
-    .replace(SOF_NEWLINES, &#x27;&#x27;)
-
-  var formatted = formatter.format(file, ESFORMATTER_CONFIG)
-    .replace(EOL_SEMICOLON, &#x27;&#x27;)
-    // run replace again; esformatter-semicolon-first will re-add semicolon at EOL
-
-  return formatted
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+function error (err) {
+console.error(err)
+...</pre></li>
     </ul>
 
 
